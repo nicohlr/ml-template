@@ -5,6 +5,7 @@ from sklearn import model_selection
 
 
 if __name__ == "__main__":
+
     df = pd.read_csv("../input/train.csv")
     df = df.dropna().reset_index(drop=True)
     df["kfold"] = -1

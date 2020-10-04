@@ -3,7 +3,6 @@ import fasttext
 import pandas as pd
 
 import config
-from feature import feature_engineering
 from prepare import prepare
 
 

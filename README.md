@@ -2,7 +2,7 @@
 
 A cookiecutter template for any ML/DL project.
 
-## Usage
+## Training
 
 If you don't have cookiecutter, install it:
 
@@ -24,6 +24,8 @@ This will create a *train_folds.csv* file in input folder. This file is the trai
 
 You can use other machine learning models for training by referencing them in the **models.py** script. You can also add cleaning, feature engineering, categorical variables encoding and scaling steps that will be applied on the data before training by filling the functions of the **prepare.py** script.
 
+## Inference
+
 When you are ready to make the final training, just run the following command:
 
     python train.py --final True --model YOUR_MODEL
@@ -32,4 +34,4 @@ When you are ready to make the final training, just run the following command:
 
 Finally, you can run inference:
 
-    python inference.py --model_path PATH_TO_FINAL_MODEL
+    python infer.py --model_path PATH_TO_FINAL_MODEL

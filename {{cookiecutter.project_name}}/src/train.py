@@ -50,10 +50,11 @@ def train(fold, model, final):
         accuracy = metrics.accuracy_score(y_valid, predictions)
         print(f'Fold={fold}, Accuracy={accuracy}')
 
+    path_suffix = 'final.bin' if final else f'fold{fold}.bin'
     # save the model
     joblib.dump(
         clf,
-        os.path.join(config.MODEL_OUTPUT, f'{model}_fold{fold}.bin')
+        os.path.join(config.MODEL_OUTPUT, f'{model}_' + path_suffix)
     )
 
 

@@ -4,7 +4,7 @@ import pandas as pd
 
 import config
 from feature import feature_engineering
-from preparation import prepare
+from prepare import prepare
 
 
 def infer(model_path):
@@ -12,8 +12,8 @@ def infer(model_path):
     # read the test data
     df = pd.read_csv(config.TEST_FILE)
 
-    # perform feature engineering & preparation
-    df = feature_engineering(df)
+    # perform cleaning, feature engineering,
+    # categorical variables encoding & scaling
     df = prepare(df)
 
     # fetch the pretrained model

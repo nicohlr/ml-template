@@ -7,8 +7,7 @@ from sklearn import metrics
 
 import config
 import models
-from feature import feature_engineering
-from preparation import prepare
+from prepare import prepare
 
 
 def train(fold, model, final):
@@ -35,8 +34,8 @@ def train(fold, model, final):
         x_valid = df_valid.drop(config.TARGET_LABEL, axis=1)
         y_valid = df_valid[config.TARGET_LABEL]
 
-    # perform feature engineering & preparation
-    x_train = feature_engineering(x_train)
+    # perform cleaning, feature engineering,
+    # categorical variables encoding & scaling
     x_train = prepare(x_train)
 
     # fetch the model from models
@@ -47,7 +46,8 @@ def train(fold, model, final):
 
     if not final:
         # calculate & print metric
-        accuracy = metrics.accuracy_score(y_valid, clf.predict(x_valid))
+        predictions = clf.predict(prepare(x_valid))
+        accuracy = metrics.accuracy_score(y_valid, predictions)
         print(f'Fold={fold}, Accuracy={accuracy}')
 
     # save the model

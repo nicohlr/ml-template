@@ -22,4 +22,14 @@ This will create a *train_folds.csv* file in input folder. This file is the trai
 
 **Note:** setting the --fold argument to `all` will train sequentially on all folds.
 
-You can use other machine learning models for training by referencing them in the **models.py** script. You can also add features engineering and preparation (for example a StandardScaler) that will be applied on the dataset before training using respectvely the **feature.py** script and the **preparation.py script**.
+You can use other machine learning models for training by referencing them in the **models.py** script. You can also add cleaning, feature engineering, categorical variables encoding and scaling steps that will be applied on the data before training by filling the functions of the **prepare.py** script.
+
+When you are ready to make the final training, just run the following command:
+
+    python train.py --final True --model YOUR_MODEL
+
+**Note:** When final argument is set to `True`, the fold argument is ignored and the training is performed on the whole training set.
+
+Finally, you can run inference:
+
+    python inference.py --model_path PATH_TO_FINAL_MODEL

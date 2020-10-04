@@ -7,32 +7,37 @@ from sklearn import metrics
 
 import config
 import models
+from feature import feature_engineering
+from preparation import prepare
 
 
-def run(fold, model, final):
+def train(fold, model, final):
 
     # read the training data with folds
     df = pd.read_csv(config.TRAIN_FILE)
 
     if final:
-        x_train = df.drop(config.TARGET_LABEL, axis=1).values
-        y_train = df[config.TARGET_LABEL].values
+        # train on whole dataset
+        x_train = df.drop(config.TARGET_LABEL, axis=1)
+        y_train = df[config.TARGET_LABEL]
     else:
         # training data is where kfold is not equal to provided fold
-        df_train = df[df['kfold'] != fold].reset_index(drop=True)
+        df_train = df[df['fold'] != fold].reset_index(drop=True)
 
         # validation data is where kfold is equal to provided fold
-        df_valid = df[df['kfold'] == fold].reset_index(drop=True)
+        df_valid = df[df['fold'] == fold].reset_index(drop=True)
 
         # create training samples
-        x_train = df_train.drop(config.TARGET_LABEL, axis=1).values
-        y_train = df_train[config.TARGET_LABEL].values
+        x_train = df_train.drop(config.TARGET_LABEL, axis=1)
+        y_train = df_train[config.TARGET_LABEL]
 
         # create validation samples
-        x_valid = df_valid.drop(config.TARGET_LABEL, axis=1).values
-        y_valid = df_valid[config.TARGET_LABEL].values
+        x_valid = df_valid.drop(config.TARGET_LABEL, axis=1)
+        y_valid = df_valid[config.TARGET_LABEL]
 
-    # add standard scaling / categorical features encoding here
+    # perform feature engineering & preparation
+    x_train = feature_engineering(x_train)
+    x_train = prepare(x_train)
 
     # fetch the model from models
     clf = models.models[model]
@@ -40,18 +45,15 @@ def run(fold, model, final):
     # fit the model on training data
     clf.fit(x_train, y_train)
 
-    if final:
-        # predict on validation samples
-        predictions = clf.predict(x_valid)
-
+    if not final:
         # calculate & print metric
-        accuracy = metrics.accuracy_score(y_valid, predictions)
+        accuracy = metrics.accuracy_score(y_valid, clf.predict(x_valid))
         print(f'Fold={fold}, Accuracy={accuracy}')
 
     # save the model
     joblib.dump(
         clf,
-        os.path.join(config.MODEL_OUTPUT, f'{model}_{fold}.bin')
+        os.path.join(config.MODEL_OUTPUT, f'{model}_fold{fold}.bin')
     )
 
 
@@ -77,9 +79,9 @@ if __name__ == '__main__':
 
     if args.fold == 'all':
         for f in range(config.N_FOLDS):
-            run(fold=f, model=args.model, final=args.final)
+            train(fold=f, model=args.model, final=args.final)
     else:
-        run(
+        train(
             fold=int(args.fold),
             model=args.model,
             final=args.final

@@ -1,4 +1,4 @@
-TRAIN_FILE = '../input/train_fe_folds.csv'
+TRAIN_FILE = '../input/train_folds.csv'
 TEST_FILE = '../input/test.csv'
 MODEL_OUTPUT = '../models/'
 N_FOLDS = 5

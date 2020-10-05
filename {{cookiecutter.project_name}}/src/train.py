@@ -10,14 +10,14 @@ import models
 from prepare import prepare
 
 
-def train(fold, model, final):
+def train(fold, model, last):
 
     # read the training data with folds
     df = pd.read_csv(config.TRAIN_FILE)
 
-    if final:
+    if last:
         # train on whole dataset
-        x_train = df.drop(config.TARGET_LABEL, axis=1)
+        x_train = df.drop([config.TARGET_LABEL, 'fold'], axis=1)
         y_train = df[config.TARGET_LABEL]
     else:
         # training data is where kfold is not equal to provided fold
@@ -27,11 +27,11 @@ def train(fold, model, final):
         df_valid = df[df['fold'] == fold].reset_index(drop=True)
 
         # create training samples
-        x_train = df_train.drop(config.TARGET_LABEL, axis=1)
+        x_train = df_train.drop([config.TARGET_LABEL, 'fold'], axis=1)
         y_train = df_train[config.TARGET_LABEL]
 
         # create validation samples
-        x_valid = df_valid.drop(config.TARGET_LABEL, axis=1)
+        x_valid = df_valid.drop([config.TARGET_LABEL, 'fold'], axis=1)
         y_valid = df_valid[config.TARGET_LABEL]
 
     # perform cleaning, feature engineering,
@@ -44,46 +44,48 @@ def train(fold, model, final):
     # fit the model on training data
     clf.fit(x_train, y_train)
 
-    if not final:
+    if not last:
         # calculate & print metric
         predictions = clf.predict(prepare(x_valid))
-        accuracy = metrics.accuracy_score(y_valid, predictions)
-        print(f'Fold={fold}, Accuracy={accuracy}')
+        metric = metrics.get_scorer(config.METRIC)._score_func(y_valid, predictions)
+        print(f'Fold={fold}, {config.METRIC}={metric}')
 
-    path_suffix = 'final.bin' if final else f'fold{fold}.bin'
+    model_path = f'{model}_' + 'last.bin' if last else f'{model}_' + f'fold{fold}.bin'
     # save the model
     joblib.dump(
         clf,
-        os.path.join(config.MODEL_OUTPUT, f'{model}_' + path_suffix)
+        os.path.join(config.MODEL_OUTPUT, model_path)
     )
 
+    if last:
+        print('Last model saved at: ' + model_path)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        '--fold',
+        *['--fold', '-f'],
         type=str,
         default='all'
     )
     parser.add_argument(
-        '--model',
+        *['--model', '-m'],
         type=str
     )
     parser.add_argument(
-        '--final',
+        *['--last', '-l'],
         type=bool,
         default=False
     )
 
     args = parser.parse_args()
 
-    if args.fold == 'all':
+    if args.fold == 'all' and not args.last:
         for f in range(config.N_FOLDS):
-            train(fold=f, model=args.model, final=args.final)
+            train(fold=f, model=args.model, last=args.last)
     else:
         train(
             fold=int(args.fold),
             model=args.model,
-            final=args.final
+            last=args.last
         )

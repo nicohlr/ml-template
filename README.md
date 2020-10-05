@@ -2,23 +2,51 @@
 
 A cookiecutter template for any ML/DL project.
 
-## Training
+## Create project
 
 If you don't have cookiecutter, install it:
 
     pip install cookiecutter
 
-Then, run the following command line. A complete project folder will automatically be created in current path:
+Then, run the following command line:
 
     cookiecutter https://github.com/nicohlr/ml-template
 
-This project folder contains subfolders, in which you can store your data, notebooks, templates and scripts. Start by replacing the default datasets in the input folder by your data. Then run the **create_folds.py** script:
+You will be asked for some information about your project:
+
+- **PROJECT_NAME**: The name of the project folder taht will be created.
+- **TARGET_LABEL**: The label of your target column.
+- **METRIC**: The metric that will be used to evaluate models. You must choose a metric among [the list of available metrics in scikit-learn](https://scikit-learn.org/stable/modules/model_evaluation.html#common-cases-predefined-values). You must choose a metric that suits your problem (don't choose a regression metric if your problem is a classification ...).
+
+A complete project folder will then be created in current path. This project folder contains subfolders, in which you can store your data, notebooks, templates and scripts:
+ 
+```
+├── LICENSE
+├── README.md              <- The top-level README
+├── input                  <- You can store your data here
+│   ├── train.csv
+│   └── test.csv
+├── models                 <- All trained models
+├── notebooks              <- You can store your notebooks here
+├── src                    <- Source code for use in this project.
+│   ├── config.py          <- Useful variables used in scripts
+│   ├── create_folds.py    <- Create a training dataset for CV
+│   ├── infer.py           <- Run inference on test dataset
+│   ├── models.py          <- Reference all models here
+│   ├── prepare.py         <- Code for cleaning, FE, scaling ...
+│   └── train.py           <- Run training
+└── requirements.txt       <- All requirements of the project
+```
+
+## Training
+
+Start by replacing the default datasets in the input folder by your data. Then run the **create_folds.py** script:
 
     python create_folds.py
 
-This will create a *train_folds.csv* file in input folder. This file is the train dataset shuffled with an additionnal "fold" column for k-fold CV. Finally, you can train you model easily on the fold of your choice (model is automatically saved in models folder) with the **train.py** script:
+This will create a *train_folds.csv* file in input folder. This file is the train dataset shuffled with an additionnal "fold" column for k-fold CV. Then, you can train you model easily on the fold of your choice with the **train.py** script (model is automatically saved in models folder):
 
-    python train.py --fold 1 --model lr
+    python train.py --fold 0 --model lr
 
 **Note:** setting the --fold argument to `all` will train sequentially on all folds.
 
@@ -26,12 +54,12 @@ You can use other machine learning models for training by referencing them in th
 
 ## Inference
 
-When you are ready to make the final training, just run the following command:
+When you are ready to make the last training (train on the whole training set), just run the following command:
 
-    python train.py --final True --model YOUR_MODEL
+    python train.py --last True --model YOUR_MODEL
 
-**Note:** When final argument is set to `True`, the fold argument is ignored and the training is performed on the whole training set.
+**Note:** When last argument is set to `True`, the fold argument is ignored and the training is performed on the whole training set.
 
 Finally, you can run inference:
 
-    python infer.py --model_path PATH_TO_FINAL_MODEL
+    python infer.py --model_path ../models/YOUR_LAST_MODEL.bin

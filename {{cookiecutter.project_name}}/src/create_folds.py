@@ -8,7 +8,7 @@ if __name__ == "__main__":
 
     df = pd.read_csv("../input/train.csv")
     df = df.dropna().reset_index(drop=True)
-    df["fold"] = -1
+    df["FOLD"] = -1
 
     # shuffle dataset
     df = df.sample(frac=1).reset_index(drop=True)
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     kf = model_selection.StratifiedKFold(n_splits=config.N_FOLDS)
 
     for f, (t_, v_) in enumerate(kf.split(X=df, y=y)):
-        df.loc[v_, 'fold'] = f
+        df.loc[v_, "FOLD"] = f
 
     df.to_csv("../input/train_folds.csv", index=False)
-    print('Training set with folds saved at: input/train_folds.csv')
+    print("Training set with folds saved at: input/train_folds.csv")

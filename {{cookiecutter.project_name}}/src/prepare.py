@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def cleaning(df):
+def _cleaning(df):
 
     # add cleaning here
     # for example, replace NaN values
@@ -9,7 +9,7 @@ def cleaning(df):
     return df
 
 
-def feature_engineering(df):
+def _feature_engineering(df):
 
     # add feature engineering here
     # for example, create new columns
@@ -17,7 +17,7 @@ def feature_engineering(df):
     return df
 
 
-def categorical_encoding(df):
+def _categorical_encoding(df):
 
     # add categorical variable encoding here
     # for example, use a OneHotEncoder
@@ -25,7 +25,7 @@ def categorical_encoding(df):
     return df
 
 
-def scaling(df):
+def _scaling(df):
 
     # add scaling here
     # for example, use a StandarScaler
@@ -35,9 +35,9 @@ def scaling(df):
 
 def prepare(df):
 
-    df = cleaning(df)
-    df = feature_engineering(df)
-    df = categorical_encoding(df)
-    df = scaling(df)
+    df = _cleaning(df)
+    df = _feature_engineering(df)
+    df = _categorical_encoding(df)
+    df = _scaling(df)
 
     return df

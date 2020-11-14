@@ -20,17 +20,17 @@ def infer(model_path):
 
     # predict on test dataset
     predictions = clf.predict(df)
-    df['predictions'] = predictions
+    df["predictions"] = predictions
 
     # dump dataset with predictions
-    df.to_csv('../submission.csv', index=False)
+    df.to_csv("../submission.csv", index=False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        *['--model_path', '-mp'],
+        *["--model_path", "-mp"],
         type=str,
     )
 
